@@ -55,3 +55,10 @@ Temporary Items
 # End of https://www.gitignore.io/api/go,macos,visualstudiocode
 
 .envrc
+
+/bin/
+/pkg/
+/src/*
+!/src/github.com/
+/src/github.com/*
+!/src/github.com/miyohide/
