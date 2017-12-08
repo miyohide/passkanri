@@ -8,8 +8,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type Options struct {
+	passlen int
+}
+
+var (
+	o = &Options{}
+)
+
 func init()  {
 	RootCmd.AddCommand(generateCmd)
+	generateCmd.Flags().IntVarP(&o.passlen, "passlen", "l", 10, "Password length")
 	rand.Seed(time.Now().UnixNano())
 }
 
@@ -21,8 +30,7 @@ var generateCmd = &cobra.Command{
 	Short:   "generate",
 	Long:    "generate",
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO 10は生成するパスワードの文字数。変更できるようにしたい。
-		b := make([]rune, 10)
+		b := make([]rune, o.passlen)
 		for i := range b {
 			b[i] = letters[rand.Intn(len(letters))]
 		}
