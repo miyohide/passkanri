@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"log"
 
 	"github.com/spf13/cobra"
 )
@@ -28,6 +30,11 @@ var registerCmd = &cobra.Command{
 	Short:   "register",
 	Long:    "register",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("register command")
+		file, err := os.OpenFile(".passkanri_go", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer file.Close()
+		fmt.Fprintf(file, "%s\t%s\t%s\n", ro.name, ro.password, ro.url)
 	},
 }
