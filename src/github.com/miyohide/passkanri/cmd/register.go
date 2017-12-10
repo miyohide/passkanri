@@ -35,6 +35,6 @@ var registerCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		defer file.Close()
-		fmt.Fprintf(file, "%s\t%s\t%s\n", ro.name, ro.password, ro.url)
+		fmt.Fprintf(file, "%s\t%s\t%s\n", ro.name, ro.url, ro.password)
 	},
 }
