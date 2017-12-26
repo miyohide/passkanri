@@ -56,9 +56,4 @@ Temporary Items
 
 .envrc
 
-/bin/
-/pkg/
-/src/*
-!/src/github.com/
-/src/github.com/*
-!/src/github.com/miyohide/
+/vendor/
