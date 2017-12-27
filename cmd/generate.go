@@ -8,17 +8,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type Options struct {
+type GenerateOptions struct {
 	passlen int
 }
 
 var (
-	o = &Options{}
+	generate_o = &GenerateOptions{}
 )
 
-func init()  {
+func init() {
 	RootCmd.AddCommand(generateCmd)
-	generateCmd.Flags().IntVarP(&o.passlen, "passlen", "l", 10, "Password length")
+	generateCmd.Flags().IntVarP(&generate_o.passlen, "passlen", "l", 10, "Password length")
 	rand.Seed(time.Now().UnixNano())
 }
 
@@ -26,11 +26,11 @@ func init()  {
 var letters = []rune("abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789")
 
 var generateCmd = &cobra.Command{
-	Use:     "generate",
-	Short:   "generate",
-	Long:    "generate",
+	Use:   "generate",
+	Short: "generate",
+	Long:  "generate",
 	Run: func(cmd *cobra.Command, args []string) {
-		b := make([]rune, o.passlen)
+		b := make([]rune, generate_o.passlen)
 		for i := range b {
 			b[i] = letters[rand.Intn(len(letters))]
 		}
