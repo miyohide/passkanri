@@ -7,15 +7,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var RootCmd = &cobra.Command {
-	Use: "passkanri",
+// RootCmd はcobraを使ったコマンド本体の説明等を定義
+var RootCmd = &cobra.Command{
+	Use:   "passkanri",
 	Short: "This tool is password management tool.",
-	Long: "This tool is password management tool.",
-  Run: func(cmd *cobra.Command, args []string) {
+	Long:  "This tool is password management tool.",
+	Run: func(cmd *cobra.Command, args []string) {
 
 	},
 }
 
+// Execute はcobraでコマンド本体の処理を呼び出す
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {
 		fmt.Println(err)
@@ -23,13 +25,13 @@ func Execute() {
 	}
 }
 
-func init()  {
+func init() {
 	cobra.OnInitialize()
 	RootCmd.AddCommand(versionCmd)
 }
 
-var versionCmd = &cobra.Command {
-	Use: "version",
+var versionCmd = &cobra.Command{
+	Use:   "version",
 	Short: "Print the version number of passkanri",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("passkanri v0.0.1")
