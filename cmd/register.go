@@ -35,7 +35,7 @@ var registerCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// TODO パスワードごとにランダムにしたい
 		// 暗号化文字列
-		keyText := "adfakdjfeaegfd;jdabjlkefldablkjdaeb"
+		keyText := "adfakdjfeaegfd;jdabjlkefldablkjd"
 		passwordText := []byte(ro.password)
 		// 暗号化アルゴリスズムを作成
 		c, err := aes.NewCipher([]byte(keyText))
