@@ -1,9 +1,10 @@
 package cmd
 
 import (
+	"bufio"
 	"fmt"
-	"io/ioutil"
-	"log"
+	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -17,10 +18,17 @@ var listCmd = &cobra.Command{
 	Short: "list",
 	Long:  "list",
 	Run: func(cmd *cobra.Command, args []string) {
-		data, err := ioutil.ReadFile(".passkanri_go")
+		// 一行ごとに読み込んで、区切り文字でそれぞれ分割する
+		f, err := os.Open(".passkanri_go")
 		if err != nil {
-			log.Fatal(err)
+			fmt.Fprintf(os.Stderr, "Password File can not open.")
+			os.Exit(1)
 		}
-		fmt.Println(string(data))
+		defer f.Close()
+		scanner := bufio.NewScanner(f)
+		for scanner.Scan() {
+			words := strings.Fields(scanner.Text())
+			fmt.Fprintf(os.Stdout, "%v\t%v\t%v\n", words[0], words[1], words[2])
+		}
 	},
 }
