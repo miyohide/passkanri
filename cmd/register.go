@@ -11,9 +11,9 @@ import (
 
 // RegisterOptions は登録する際に利用者から受け付けるデータを定義
 type RegisterOptions struct {
-	name     string
-	url      string
-	password string
+	RegOptName     string `validate:"required"`
+	RegOptURL      string `validate:"required"`
+	RegOptPassword string `validate:"required"`
 }
 
 var (
@@ -23,20 +23,23 @@ var (
 
 func init() {
 	RootCmd.AddCommand(registerCmd)
-	registerCmd.Flags().StringVarP(&ro.name, "name", "n", "", "Registed Name")
-	registerCmd.Flags().StringVarP(&ro.password, "password", "p", "", "Password")
-	registerCmd.Flags().StringVarP(&ro.url, "url", "u", "", "URL")
+	registerCmd.Flags().StringVarP(&ro.RegOptName, "name", "n", "", "Registed Name")
+	registerCmd.Flags().StringVarP(&ro.RegOptPassword, "password", "p", "", "Password")
+	registerCmd.Flags().StringVarP(&ro.RegOptURL, "url", "u", "", "URL")
 }
 
 var registerCmd = &cobra.Command{
 	Use:   "register",
 	Short: "register",
 	Long:  "register",
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return validateParams(*ro)
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		// TODO パスワードごとにランダムにしたい
 		// 暗号化文字列
 		keyText := "adfakdjfeaegfd;jdabjlkefldablkjd"
-		passwordText := []byte(ro.password)
+		passwordText := []byte(ro.RegOptPassword)
 		// 暗号化アルゴリスズムを作成
 		c, err := aes.NewCipher([]byte(keyText))
 		if err != nil {
@@ -53,6 +56,6 @@ var registerCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		defer file.Close()
-		fmt.Fprintf(file, "%s\t%s\t%s\n", ro.name, ro.url, ciphertext)
+		fmt.Fprintf(file, "%s\t%s\t%s\n", ro.RegOptName, ro.RegOptURL, ciphertext)
 	},
 }
