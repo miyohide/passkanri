@@ -58,5 +58,5 @@ Temporary Items
 
 /vendor/
 
-.passkanri_go  ## password Files
-passkanri  ## binary
+.passkanri_go
+passkanri
