@@ -4,6 +4,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"database/sql"
 	"encoding/hex"
 	"fmt"
 	"io"
@@ -57,12 +58,22 @@ var registerCmd = &cobra.Command{
 		// 暗号化文字列の生成
 		stream := cipher.NewCFBEncrypter(block, iv)
 		stream.XORKeyStream(ciphertext[aes.BlockSize:], passwordText)
-		file, err := os.OpenFile(".passkanri_go", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+
+		// テーブルに格納
+		db, err := sql.Open("sqlite3", "db/passkanri.sqlite3")
 		if err != nil {
 			fmt.Printf("File open error: %s\n", err)
 			os.Exit(1)
 		}
-		defer file.Close()
-		fmt.Fprintf(file, "%s\t%s\t%x\n", ro.RegOptName, ro.RegOptURL, ciphertext)
+		_, err = db.Exec(
+			`INSERT INTO passkanri (name, url, password) VALUES (?, ?, ?)`,
+			ro.RegOptName,
+			ro.RegOptURL,
+			fmt.Sprintf("%x", ciphertext),
+		)
+		if err != nil {
+			fmt.Printf("DB Insert Error: %s\n", err)
+			os.Exit(1)
+		}
 	},
 }
