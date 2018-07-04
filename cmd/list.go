@@ -1,13 +1,12 @@
 package cmd
 
 import (
-	"bufio"
 	"crypto/aes"
 	"crypto/cipher"
+	"database/sql"
 	"encoding/hex"
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -28,17 +27,32 @@ var listCmd = &cobra.Command{
 			fmt.Fprintf(os.Stderr, "Error: NewCiper")
 			os.Exit(1)
 		}
-		// 一行ごとに読み込んで、区切り文字でそれぞれ分割する
-		f, err := os.Open(".passkanri_go")
+		// DBから全件取得する
+		db, err := sql.Open("sqlite3", "db/passkanri.sqlite3")
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Password File can not open.\n")
+			fmt.Printf("File open error: %s\n", err)
 			os.Exit(1)
 		}
-		defer f.Close()
-		scanner := bufio.NewScanner(f)
-		for scanner.Scan() {
-			words := strings.Fields(scanner.Text())
-			ciphertext, _ := hex.DecodeString(words[len(words)-1])
+		rows, err := db.Query(
+			`SELECT * FROM passkanri`,
+		)
+		if err != nil {
+			fmt.Printf("SELECT query error: %s\n", err)
+			os.Exit(1)
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var id int
+			var name string
+			var url string
+			var hextext string
+
+			if err := rows.Scan(&id, &name, &url, &hextext); err != nil {
+				fmt.Printf("row Scan error: %s\n", err)
+				os.Exit(1)
+			}
+			ciphertext, _ := hex.DecodeString(hextext)
 			if len(ciphertext) < aes.BlockSize {
 				fmt.Fprintf(os.Stderr, "Ciphertext too short\n")
 				os.Exit(1)
@@ -47,7 +61,7 @@ var listCmd = &cobra.Command{
 			ciphertext = ciphertext[aes.BlockSize:]
 			stream := cipher.NewCFBDecrypter(block, iv)
 			stream.XORKeyStream(ciphertext, ciphertext)
-			fmt.Fprintf(os.Stdout, "%v\t%v\t%v\n", words[0], words[1], string(ciphertext))
+			fmt.Fprintf(os.Stdout, "%v\t%v\t%v\t%v\n", id, name, url, string(ciphertext))
 		}
 	},
 }
