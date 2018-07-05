@@ -13,12 +13,12 @@ type GenerateOptions struct {
 }
 
 var (
-	generate_o = &GenerateOptions{}
+	gOpt = &GenerateOptions{}
 )
 
 func init() {
 	RootCmd.AddCommand(generateCmd)
-	generateCmd.Flags().IntVarP(&generate_o.passlen, "passlen", "l", 10, "Password length")
+	generateCmd.Flags().IntVarP(&gOpt.passlen, "passlen", "l", 10, "Password length")
 	rand.Seed(time.Now().UnixNano())
 }
 
@@ -30,7 +30,7 @@ var generateCmd = &cobra.Command{
 	Short: "generate",
 	Long:  "generate",
 	Run: func(cmd *cobra.Command, args []string) {
-		b := make([]rune, generate_o.passlen)
+		b := make([]rune, gOpt.passlen)
 		for i := range b {
 			b[i] = letters[rand.Intn(len(letters))]
 		}
