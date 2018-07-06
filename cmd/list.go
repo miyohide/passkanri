@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -43,7 +44,7 @@ var listCmd = &cobra.Command{
 		defer rows.Close()
 
 		fmt.Fprintf(os.Stdout, "|%5s|%10s|%30s|%15s|\n", "Id", "Name", "URL", "Password")
-		fmt.Fprintf(os.Stdout, "|-----+----------+------------------------------+---------------|\n")
+		fmt.Fprintf(os.Stdout, "|%5s+%10s+%30s+%15s|\n", strings.Repeat("-", 5), strings.Repeat("-", 10), strings.Repeat("-", 30), strings.Repeat("-", 15))
 		for rows.Next() {
 			var id int
 			var name string
@@ -64,7 +65,7 @@ var listCmd = &cobra.Command{
 			stream := cipher.NewCFBDecrypter(block, iv)
 			stream.XORKeyStream(ciphertext, ciphertext)
 			fmt.Fprintf(os.Stdout, "|% 5d|%10s|%30s|%15s|\n", id, name, url, string(ciphertext))
-			fmt.Fprintf(os.Stdout, "|-----+----------+------------------------------+---------------|\n")
+			fmt.Fprintf(os.Stdout, "|%5s+%10s+%30s+%15s|\n", strings.Repeat("-", 5), strings.Repeat("-", 10), strings.Repeat("-", 30), strings.Repeat("-", 15))
 		}
 	},
 }
